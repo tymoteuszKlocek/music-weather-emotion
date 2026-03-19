@@ -7,27 +7,45 @@ import {
 } from "@/types/analysis";
 
 export function analyzeCorrelation(
-    music: CountryMusicProfile,
-    weather: CountryWeatherProfile
+  music: CountryMusicProfile,
+  weather: CountryWeatherProfile
 ): CorrelationResult[] {
-    // TODO: real correlation – for now, static example
-    const results: CorrelationResult[] = [
-        {
-            variableA: "temperature",
-            variableB: "valence",
-            coefficient: -0.3,
-            description:
-                "Lower temperatures in this dataset seem to align with slightly lower valence."
-        },
-        {
-            variableA: "cloudCover",
-            variableB: "energy",
-            coefficient: -0.4,
-            description:
-                "Higher cloud cover is modestly associated with lower energy."
-        }
-    ];
-    return results;
+  const results: CorrelationResult[] = [];
+
+  // Logic: Compare normalized values to generate "pseudo-correlations" 
+  // for a single data point (since we don't have a time-series array yet)
+  
+  // Example: Temperature vs Energy
+  const temp = weather.metrics.temperature;
+  const energy = music.average.energy;
+
+  if (temp > 25 && energy > 0.6) {
+    results.push({
+      variableA: "temperature",
+      variableB: "energy",
+      coefficient: 0.8,
+      description: "High temperatures in this region align with high musical energy."
+    });
+  } else if (temp < 10 && energy < 0.5) {
+    results.push({
+      variableA: "temperature",
+      variableB: "energy",
+      coefficient: -0.7,
+      description: "Cold weather correlates with lower musical energy here."
+    });
+  }
+
+  // Example: Clouds vs Valence (Positivity)
+  if (weather.metrics.cloudCover > 70 && music.average.valence < 0.5) {
+    results.push({
+      variableA: "cloudCover",
+      variableB: "valence",
+      coefficient: -0.6,
+      description: "Heavy cloud cover matches a more somber (lower valence) musical mood."
+    });
+  }
+
+  return results;
 }
 
 export function buildGraph(
